@@ -14,27 +14,28 @@ import RP from './RP4_KICK_1.mp3'
 export default function App() {
 
 
-  const [volume, setVolume] = useState(0.3);
-
+  const [volume, setVolume] = useState(0.1);
+  const [renderSound, setRenderSound]= useState('W')
   const [power, setPower] = useState(true)
   const [float, setFloat]= useState('left')
   //reference to the audio element
   // Create separate refs for each audio element
   const audioRefs = {
-    Q: useRef(),
-    W: useRef(),
-    E: useRef(),
-    A: useRef(),
-    S: useRef(),
-    D: useRef(),
-    Z: useRef(),
-    X: useRef(),
-    C: useRef(),
+    Q: [useRef(),"Heater 1"],
+    W: [useRef(), "Clap"],
+    E: [useRef(), "Heater 2"],
+    A: [useRef(), "Heater 3"],
+    S: [useRef(), "Heater 4"],
+    D: [useRef(), "Heater 6"],
+    Z: [useRef(), "Kick n Hat"],
+    X: [useRef(), "RP4 Kick"],
+    C: [useRef(), "Close HH"],
    }
   //Function to handle button click
   const playSound = (key) => {
     if(!power) return; //If power is off (muted), do not play sound
-    audioRefs[key].current.play()
+    audioRefs[key][0].current.play()
+    setRenderSound(audioRefs[key][1]);
     }
      // Function to toggle power (mute/unmute)
     const handlePower = (preState) => {
@@ -45,8 +46,9 @@ export default function App() {
       const newVolume = parseFloat(event.target.value);
       setVolume(newVolume);
       Object.values(audioRefs).forEach((audioRef) => {
+        if(audioRef.current) {
         audioRef.current.volume = newVolume;
-      });
+     }});
       // You can use the 'newVolume' value to control the volume in your application
       // For example, you can set the volume of an audio element like this:
       // audioElement.volume = newVolume;
@@ -61,7 +63,9 @@ export default function App() {
       <Row className='p-5 mx-5 my-5 border border-info' sm={1} md={2}>
         <Col className='border border-info' >
           <Row  id="display" sm={3} md={3} className='gap-1'>
-            <Button onClick={()=> playSound('Q')} style={{ backgroundColor: 'rgba(180, 174, 0, 0.1)'}} className='p-3 border border-danger mx-0 my-0 text-dark drum-pad box-shadow'>Q</Button>
+            <Button  onClick={() => {
+    playSound('Q')
+  } }style={{ backgroundColor: 'rgba(180, 174, 0, 0.1)'}} className='p-3 border border-danger mx-0 my-0 text-dark drum-pad box-shadow'>Q</Button>
             <Button onClick={()=> playSound('W')}  style={{ backgroundColor: 'rgba(180, 174, 0, 0.1)'}} className='p-3 border border-danger mx-0 my-0 text-dark drum-pad box-shadow'>W</Button>
             <Button onClick={()=> playSound('E')}  style={{ backgroundColor: 'rgba(180, 174, 0, 0.1)'}} className='p-3 border border-danger mx-0 my-0 text-dark drum-pad box-shadow'>E</Button>
             <Button onClick={()=> playSound('A')}  style={{ backgroundColor: 'rgba(180, 174, 0, 0.1)'}} className='p-3 border border-danger mx-0 my-0 text-dark drum-pad'>A</Button>
@@ -70,15 +74,15 @@ export default function App() {
             <Button onClick={()=> playSound('Z')}  style={{ backgroundColor: 'rgba(180, 174, 0, 0.1)'}} className='p-3 border border-danger mx-0 my-0 text-dark drum-pad'>Z</Button>
             <Button onClick={()=> playSound('X')}  style={{ backgroundColor: 'rgba(180, 174, 0, 0.1)'}} className='p-3 border border-danger mx-0 my-0 text-dark drum-pad'>X</Button>
             <Button onClick={()=> playSound('C')}  style={{ backgroundColor: 'rgba(180, 174, 0, 0.1)'}} className='p-3 border border-danger mx-0 my-0 text-dark drum-pad'>C</Button>
-          <audio className='Clip' id="Q" ref={audioRefs.Q} src={HeaterOne}/>
-          <audio className='Clip' id="W" ref={audioRefs.W} src={Cev}/>
-          <audio className='Clip' id="E" ref={audioRefs.E} src={DSC}/>
-          <audio className='Clip' id="A" ref={audioRefs.A} src={HeaterTwo}/>
-          <audio className='Clip' id="S" ref={audioRefs.S} src={HeaterThree}/>
-          <audio className='Clip' id="D" ref={audioRefs.D} src={HeaterFour}/>
-          <audio className='Clip' id="Z" ref={audioRefs.Z} src={HeaterSix}/>
-          <audio className='Clip' id="X" ref={audioRefs.X} src={Kick}/>
-          <audio className='Clip' id="C" ref={audioRefs.C} src={RP}/>
+          <audio className='Clip' id="Q" ref={audioRefs.Q[0]} src={HeaterOne}/>
+          <audio className='Clip' id="W" ref={audioRefs.W[0]} src={Cev}/>
+          <audio className='Clip' id="E" ref={audioRefs.E[0]} src={DSC}/>
+          <audio className='Clip' id="A" ref={audioRefs.A[0]} src={HeaterTwo}/>
+          <audio className='Clip' id="S" ref={audioRefs.S[0]} src={HeaterThree}/>
+          <audio className='Clip' id="D" ref={audioRefs.D[0]} src={HeaterFour}/>
+          <audio className='Clip' id="Z" ref={audioRefs.Z[0]} src={HeaterSix}/>
+          <audio className='Clip' id="X" ref={audioRefs.X[0]} src={Kick}/>
+          <audio className='Clip' id="C" ref={audioRefs.C[0]} src={RP}/>
 
 
 
@@ -96,7 +100,9 @@ export default function App() {
 
 
             </Col>
-            <Col><p id="display">On</p></Col>
+            <Col>
+          <p id="display">{renderSound}</p>
+            </Col>
             <Col className='border border-dark'>
              <input
              className='w-100'
